@@ -24,7 +24,7 @@ public class ChestGenPlugin extends OriPlugin {
 
 
         // Load & Run the scheduled generator task.
-        new GenerateTask(this).runTaskTimerAsynchronously(this, 0, this.getConfig().getInt("generation-delay"));
+        new GenerateTask(this).runTaskTimer(this, 0, this.getConfig().getInt("generation-delay"));
 
     }
 

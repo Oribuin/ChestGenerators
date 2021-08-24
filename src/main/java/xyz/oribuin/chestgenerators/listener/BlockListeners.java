@@ -6,11 +6,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import xyz.oribuin.chestgenerators.ChestGenPlugin;
 import xyz.oribuin.chestgenerators.manager.ChestManager;
 import xyz.oribuin.chestgenerators.manager.DataManager;
+import xyz.oribuin.chestgenerators.manager.GeneratorManager;
 import xyz.oribuin.chestgenerators.obj.Generator;
 
 import java.util.Optional;
@@ -61,6 +63,12 @@ public class BlockListeners implements Listener {
         gen.setLocation(getBlockLoc(chest.getLocation()));
         this.data.createGenerator(gen);
         this.chestManager.saveGenerator(gen);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onChat(AsyncPlayerChatEvent event) {
+        final ItemStack item = this.chestManager.getGeneratorAsItem(new Generator(this.plugin.getManager(GeneratorManager.class).getDefaultGenerator()), 1);
+        event.getPlayer().getInventory().addItem(item);
     }
 
 

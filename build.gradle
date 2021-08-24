@@ -3,8 +3,8 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
 
-group "net.skycraftia.skyhoppers"
-version "1.0-B2"
+group "xyz.oribuin.chestgenerators"
+version "1.0"
 sourceCompatibility = JavaVersion.VERSION_16
 targetCompatibility = JavaVersion.VERSION_16
 

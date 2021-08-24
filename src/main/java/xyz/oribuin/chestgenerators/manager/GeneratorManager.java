@@ -34,7 +34,6 @@ public class GeneratorManager extends Manager {
 
         // Get all the generators added to the config
         section.getKeys(false).forEach(s -> {
-
             // Define basic generator values
             final ItemGenerator itemGenerator = new ItemGenerator(Integer.parseInt(s));
             itemGenerator.setDisplayName(section.getString(s + ".name"));
@@ -42,7 +41,7 @@ public class GeneratorManager extends Manager {
             itemGenerator.setCost(section.getDouble(s + ".cost"));
 
             // Get all the generator's materials to see if they exist.
-            final ConfigurationSection materialSection = section.getConfigurationSection("materials");
+            final ConfigurationSection materialSection = section.getConfigurationSection(s + ".materials");
             if (materialSection == null)
                 return;
 
@@ -60,6 +59,11 @@ public class GeneratorManager extends Manager {
 
             // Cache the generator
             this.generatorMap.put(itemGenerator.getId(), itemGenerator);
+            this.plugin.getLogger().info("Found Generator: " + itemGenerator.getId());
+
+            if (this.generatorMap.size() == 0) {
+                this.plugin.getLogger().severe("Didn't cache any generators.");
+            }
         });
 
     }
@@ -76,7 +80,7 @@ public class GeneratorManager extends Manager {
 
     public ItemGenerator getDefaultGenerator() {
         // The plugin literally has to have atleast one generator or else it shuts down, so this should always be present.
-        return this.generatorMap.values().stream().findFirst().get();
+        return this.generatorMap.get(0);
     }
 
     @Override

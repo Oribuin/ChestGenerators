@@ -160,15 +160,15 @@ public class ChestManager extends Manager {
     /**
      * Get the placeholders for the hopper itself,
      *
-     * @param generator The hopper
+     * @param gen The hopper
      * @return The placeholders for the hopper.
      */
-    public StringPlaceholders getPlaceholders(Generator generator) {
+    public StringPlaceholders getPlaceholders(Generator gen) {
         return StringPlaceholders.builder()
-                .addPlaceholder("enabled", generator.isEnabled() ? "Yes" : "No")
-                .addPlaceholder("generator", HexUtils.colorify(generator.getActiveGenerator().getDisplayName()))
-                .addPlaceholder("description", HexUtils.colorify(PluginUtils.formatList(generator.getActiveGenerator().getDescription())))
-                .addPlaceholder("owner", Bukkit.getOfflinePlayer(generator.getOwner()).getName())
+                .addPlaceholder("enabled", gen.isEnabled() ? "Yes" : "No")
+                .addPlaceholder("generator", HexUtils.colorify(gen.getActiveGenerator().getDisplayName()))
+                .addPlaceholder("description", HexUtils.colorify(PluginUtils.formatList(gen.getActiveGenerator().getDescription())))
+                .addPlaceholder("owner", gen.getOwner() != null ? Bukkit.getOfflinePlayer(gen.getOwner()).getName() : "None")
                 .build();
     }
 
