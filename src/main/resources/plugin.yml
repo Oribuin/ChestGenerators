@@ -1,0 +1,6 @@
+name: ChestGenerators
+main: xyz.oribuin.chestgenerators.ChestGenPlugin
+version: '1.0'
+api-version: '1.14'
+author: Oribuin
+description: Choose from a variety of unlockable item generators to all generate in a single chest over time.

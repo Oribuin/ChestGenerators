@@ -3,8 +3,12 @@ package xyz.oribuin.chestgenerators.manager;
 import com.google.gson.Gson;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Chest;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import xyz.oribuin.chestgenerators.ChestGenPlugin;
@@ -12,6 +16,7 @@ import xyz.oribuin.chestgenerators.obj.Generator;
 import xyz.oribuin.chestgenerators.obj.ItemGenerator;
 import xyz.oribuin.chestgenerators.obj.SavedGenerators;
 import xyz.oribuin.chestgenerators.util.PluginUtils;
+import xyz.oribuin.gui.Item;
 import xyz.oribuin.orilibrary.manager.Manager;
 import xyz.oribuin.orilibrary.util.HexUtils;
 import xyz.oribuin.orilibrary.util.StringPlaceholders;
@@ -25,7 +30,7 @@ public class ChestManager extends Manager {
 
     // Namespaced keys for the plugin so I don't have to keep making new instances.
     private final NamespacedKey enabled = new NamespacedKey(this.plugin, "enabled");
-    private final NamespacedKey gen = new NamespacedKey(this.plugin, "activeGenerator");
+    private final NamespacedKey activeGen = new NamespacedKey(this.plugin, "activeGenerator");
     private final NamespacedKey owner = new NamespacedKey(this.plugin, "owner");
     private final NamespacedKey previousGens = new NamespacedKey(this.plugin, "previousGens");
 
@@ -35,6 +40,11 @@ public class ChestManager extends Manager {
         super(plugin);
     }
 
+    /**
+     * Save a generator block's data in the block to prevent excessive SQL Uses
+     *
+     * @param generator The generator being saved.
+     */
     public void saveGenerator(Generator generator) {
         // Don't save a physical generator if the location isn't set.
         if (generator.getLocation() == null)
@@ -50,15 +60,44 @@ public class ChestManager extends Manager {
         chest.update();
 
         // Save the active generator id
-        container.set(gen, PersistentDataType.INTEGER, generator.getActiveGenerator().getId());
+        container.set(activeGen, PersistentDataType.INTEGER, generator.getActiveGenerator().getId());
         chest.update();
 
         if (generator.getOwner() != null)
-            container.set(gen, PersistentDataType.STRING, generator.getOwner().toString());
+            container.set(activeGen, PersistentDataType.STRING, generator.getOwner().toString());
         chest.update();
 
         container.set(previousGens, PersistentDataType.STRING, serializeItemGens(generator.getUnlockedGens()));
         chest.update();
+    }
+
+    public ItemStack getGeneratorAsItem(Generator gen, int amount) {
+        // Define the itemstack's basic values
+        final ItemStack item = new Item.Builder(Material.CHEST)
+                .setName(this.format(gen, plugin.getConfig().getString("generator-item.name")))
+                .setLore(this.format(gen, plugin.getConfig().getStringList("generator-item.lore")))
+                .setFlags(ItemFlag.HIDE_ATTRIBUTES)
+                .glow(plugin.getConfig().getBoolean("generator-item.glow"))
+                .setAmount(amount)
+                .create();
+
+        final ItemMeta meta = item.getItemMeta();
+        // The item meta cannot be null
+        assert meta != null;
+
+        final PersistentDataContainer container = meta.getPersistentDataContainer();
+        // Save wether the generator is enabled or not
+        container.set(enabled, PersistentDataType.STRING, String.valueOf(gen.isEnabled()));
+        // Save the active generator id
+        container.set(activeGen, PersistentDataType.INTEGER, gen.getActiveGenerator().getId());
+        // Save the generator's owner
+        if (gen.getOwner() != null)
+            container.set(owner, PersistentDataType.STRING, gen.getOwner().toString());
+
+        // Save the generator's previous generators
+        container.set(previousGens, PersistentDataType.STRING, serializeItemGens(gen.getUnlockedGens()));
+        item.setItemMeta(meta);
+        return item;
     }
 
     /**
@@ -75,7 +114,7 @@ public class ChestManager extends Manager {
         // Check if the generator for the chest even exists anymore.
         final GeneratorManager genManager = this.plugin.getManager(GeneratorManager.class);
 
-        final Optional<ItemGenerator> generatorOptional = genManager.getGeneratorByID(container.getOrDefault(gen, PersistentDataType.INTEGER, genManager.getDefaultGenerator().getId()));
+        final Optional<ItemGenerator> generatorOptional = genManager.getGeneratorByID(container.getOrDefault(activeGen, PersistentDataType.INTEGER, genManager.getDefaultGenerator().getId()));
         if (generatorOptional.isEmpty())
             return Optional.empty();
 

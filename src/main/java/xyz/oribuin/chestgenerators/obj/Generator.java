@@ -2,7 +2,7 @@ package xyz.oribuin.chestgenerators.obj;
 
 import org.bukkit.Location;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +19,7 @@ public class Generator {
         this.location = null;
         this.enabled = true;
         this.owner = null;
-        this.unlockedGens = new ArrayList<>();
+        this.unlockedGens = Collections.singletonList(activeGenerator);
     }
 
     public Location getLocation() {
