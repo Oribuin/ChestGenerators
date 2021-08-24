@@ -1,6 +1,5 @@
 package xyz.oribuin.chestgenerators.obj;
 
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;

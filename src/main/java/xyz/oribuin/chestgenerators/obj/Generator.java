@@ -6,10 +6,14 @@ import java.util.UUID;
 
 public class Generator {
 
-    private Location location;
+    private Location location = null;
     private boolean enabled = true;
     private ItemGenerator itemGenerator;
-    private UUID owner;
+    private UUID owner = null;
+
+    public Generator(final ItemGenerator itemGen) {
+        this.itemGenerator = itemGen;
+    }
 
     public Location getLocation() {
         return location;
@@ -17,14 +21,6 @@ public class Generator {
 
     public void setLocation(Location location) {
         this.location = location;
-    }
-
-    public ItemGenerator getGenerator() {
-        return itemGenerator;
-    }
-
-    public void setGenerator(ItemGenerator itemGenerator) {
-        this.itemGenerator = itemGenerator;
     }
 
     public UUID getOwner() {
@@ -43,5 +39,12 @@ public class Generator {
         this.enabled = enabled;
     }
 
+    public ItemGenerator getItemGenerator() {
+        return itemGenerator;
+    }
+
+    public void setItemGenerator(ItemGenerator itemGenerator) {
+        this.itemGenerator = itemGenerator;
+    }
 
 }

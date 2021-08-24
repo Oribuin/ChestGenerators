@@ -9,4 +9,24 @@ mysql:
   password: Password
   ssl: true
 
-# The time in intervals before each
+generator-item:
+  name: '#99ff99&lChest Generator'
+  lore:
+    - '&7Generate items effortlessly in this'
+    - '&7chest over time using a variety of'
+    - '&7a different generators to choose from!'
+    - ' '
+    - ' &f&m-----------------------'
+    - ' &f| #99ff99&lEnabled &7: &f%enabled%'
+    - ' &f| #99ff99&lGenerator &7: &f%generator%'
+    - ' &f| #99ff99&lOwner &7: &f%owner%'
+    - ' &f&m-----------------------'
+  glow: true
+
+# The time in ticks before each item is generated in the chests.
+generation-delay: 60
+
+generators:
+  0:
+    name: '#2c3e50Stone Generator'
+

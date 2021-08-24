@@ -3,6 +3,7 @@ package xyz.oribuin.chestgenerators.manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Chest;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import xyz.oribuin.chestgenerators.ChestGenPlugin;
@@ -32,6 +33,30 @@ public class ChestManager extends Manager {
         super(plugin);
     }
 
+    public void saveGenerator(Generator generator) {
+        // Don't save a physical generator if the location isn't set.
+        if (generator.getLocation() == null)
+            return;
+
+        // Check if the generator is a chest or not.
+        if (!(generator.getLocation().getBlock().getState() instanceof Chest chest))
+            return;
+
+        final PersistentDataContainer container = chest.getPersistentDataContainer();
+        // here is our daily: Why the fuck do I need to update each time i set a new value on a block and a block only.
+        container.set(enabled, PersistentDataType.STRING, String.valueOf(generator.isEnabled()));
+        chest.update();
+
+        // Save the active generator id
+        container.set(gen, PersistentDataType.INTEGER, generator.getItemGenerator().getId());
+        chest.update();
+
+        if (generator.getOwner() != null)
+            container.set(gen, PersistentDataType.STRING, generator.getOwner().toString());
+
+        chest.update();
+    }
+
     /**
      * Get a chest generator from a PersistentDataContainer.
      *
@@ -43,18 +68,18 @@ public class ChestManager extends Manager {
         if (!container.has(enabled, PersistentDataType.STRING))
             return Optional.empty();
 
-        final Generator generator = new Generator();
-        generator.setLocation(loc);
-
         // Check if the generator for the chest even exists anymore.
-        final Optional<ItemGenerator> generatorOptional = this.plugin.getManager(GeneratorManager.class).getGeneratorByID(container.getOrDefault(gen, PersistentDataType.INTEGER, 0));
+        final GeneratorManager genManager = this.plugin.getManager(GeneratorManager.class);
+
+        final Optional<ItemGenerator> generatorOptional = genManager.getGeneratorByID(container.getOrDefault(gen, PersistentDataType.INTEGER, genManager.getDefaultGenerator().getId()));
         if (generatorOptional.isEmpty())
             return Optional.empty();
 
-        generator.setGenerator(generatorOptional.get());
+        final Generator generator = new Generator(generatorOptional.get());
+        generator.setLocation(loc);
 
+        // If the generator has an owner, save it.
         if (container.get(owner, PersistentDataType.STRING) != null)
-            // It isnt gonna be null with the check above.
             generator.setOwner(UUID.fromString(Objects.requireNonNull(container.get(owner, PersistentDataType.STRING))));
 
         return Optional.of(generator);
@@ -69,8 +94,8 @@ public class ChestManager extends Manager {
     public StringPlaceholders getPlaceholders(Generator generator) {
         return StringPlaceholders.builder()
                 .addPlaceholder("enabled", generator.isEnabled() ? "Yes" : "No")
-                .addPlaceholder("name", HexUtils.colorify(generator.getGenerator().getDisplayName()))
-                .addPlaceholder("description", PluginUtils.formatList(generator.getGenerator().getDescription()))
+                .addPlaceholder("generator", HexUtils.colorify(generator.getItemGenerator().getDisplayName()))
+                .addPlaceholder("description", PluginUtils.formatList(generator.getItemGenerator().getDescription()))
                 .addPlaceholder("owner", Bukkit.getOfflinePlayer(generator.getOwner()).getName())
                 .build();
     }
@@ -79,7 +104,7 @@ public class ChestManager extends Manager {
      * Format a message relating to generator with placeholders.
      *
      * @param generator The Chest Generator
-     * @param message        The message
+     * @param message   The message
      * @return A colorified message with hopper placeholder support.
      */
     private String format(Generator generator, String message) {
@@ -90,7 +115,7 @@ public class ChestManager extends Manager {
      * Format a message list relating to generator with placeholders.
      *
      * @param generator The chest generator.
-     * @param message        The message list
+     * @param message   The message list
      * @return A colorified message list with hopper placeholder support.
      */
     private List<String> format(Generator generator, List<String> message) {

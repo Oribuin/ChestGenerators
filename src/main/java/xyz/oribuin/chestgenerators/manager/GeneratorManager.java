@@ -3,6 +3,7 @@ package xyz.oribuin.chestgenerators.manager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 import xyz.oribuin.chestgenerators.ChestGenPlugin;
 import xyz.oribuin.chestgenerators.obj.ItemGenerator;
 import xyz.oribuin.orilibrary.manager.Manager;
@@ -14,7 +15,7 @@ import java.util.Optional;
 public class GeneratorManager extends Manager {
 
     private final ChestGenPlugin plugin = (ChestGenPlugin) this.getPlugin();
-    private Map<Integer, ItemGenerator> generatorMap = new HashMap<>();
+    private final Map<Integer, ItemGenerator> generatorMap = new HashMap<>();
 
     public GeneratorManager(ChestGenPlugin plugin) {
         super(plugin);
@@ -45,7 +46,17 @@ public class GeneratorManager extends Manager {
                 return;
 
             // Add all the generator materials to the generator type's materials + chances
-            materialSection.getKeys(false).forEach(material -> itemGenerator.getMaterialChances().put(Material.valueOf(material.toUpperCase()), materialSection.getInt(material)));
+            materialSection.getKeys(false).forEach(material -> {
+                Material matchedMaterial = Material.matchMaterial(Optional.ofNullable(materialSection.getString(material + ".material")).orElse("DIRT"));
+
+                // Make default item dort
+                if (matchedMaterial == null)
+                    matchedMaterial = Material.DIRT;
+
+                // Add the item to the material chances map.
+                itemGenerator.getMaterialChances().put(new ItemStack(matchedMaterial, materialSection.getInt(material + ".amount")), materialSection.getInt(material + ".chance"));
+            });
+
             // Cache the generator
             this.generatorMap.put(itemGenerator.getId(), itemGenerator);
         });
@@ -62,8 +73,18 @@ public class GeneratorManager extends Manager {
         return Optional.ofNullable(this.generatorMap.get(id));
     }
 
+    public ItemGenerator getDefaultGenerator() {
+        // The plugin literally has to have atleast one generator or else it shuts down, so this should always be present.
+        return this.generatorMap.values().stream().findFirst().get();
+    }
+
     @Override
     public void disable() {
         generatorMap.clear();
     }
+
+    public Map<Integer, ItemGenerator> getGeneratorMap() {
+        return generatorMap;
+    }
+
 }
