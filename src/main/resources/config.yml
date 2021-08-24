@@ -1,0 +1,12 @@
+# Configure SQL Saving, MySQL is absolutely not recommended if you're using this on multiple servers
+# but mysql does do data faster so up to you.
+mysql:
+  enabled: false
+  host: localhost
+  port: 3306
+  dbname: DBName
+  username: Username
+  password: Password
+  ssl: true
+
+# The time in intervals before each
