@@ -76,21 +76,24 @@ public class DataManager extends Manager {
 
                     final Location loc = PluginUtils.getBlockLoc(new Location(world, x, y, z));
 
-                    // Delete the location from the database if the block isnt a chest anymore
-                    if (!(loc.getBlock().getState() instanceof Chest chest)) {
-                        this.deleteGenerator(loc);
-                        return;
-                    }
+                    // Please don't let this cause significant issues
+                    this.plugin.getServer().getScheduler().runTask(plugin, () -> {
+                        // Delete the location from the database if the block isnt a chest anymore
+                        if (!(loc.getBlock().getState() instanceof Chest chest)) {
+                            this.deleteGenerator(loc);
+                            return;
+                        }
 
-                    // Check if the chest is a generator orn ot.
-                    final Optional<Generator> optionalGen = this.chestManager.getGenFromPDC(loc, chest.getPersistentDataContainer());
-                    if (optionalGen.isEmpty()) {
-                        this.deleteGenerator(loc);
-                        return;
-                    }
+                        // Check if the chest is a generator orn ot.
+                        final Optional<Generator> optionalGen = this.chestManager.getGenFromPDC(loc, chest.getPersistentDataContainer());
+                        if (optionalGen.isEmpty()) {
+                            this.deleteGenerator(loc);
+                            return;
+                        }
 
-                    // Cache the gen to prevent a million SQL Queries.
-                    this.cachedGens.put(loc, optionalGen.get());
+                        // Cache the gen to prevent a million SQL Queries.
+                        this.cachedGens.put(loc, optionalGen.get());
+                    });
                 }
             }
 
