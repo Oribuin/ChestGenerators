@@ -13,12 +13,14 @@ public class ItemGenerator {
     private String displayName;
     private List<String> description;
     private Map<ItemStack, Integer> materialChances;
+    private double cost;
 
     public ItemGenerator(final int id) {
         this.id = id;
         this.displayName = String.valueOf(id);
         this.description = new ArrayList<>();
         this.materialChances = new HashMap<>();
+        this.cost = 0.0;
     }
 
     public int getId() {
@@ -47,6 +49,14 @@ public class ItemGenerator {
 
     public void setMaterialChances(Map<ItemStack, Integer> materialChances) {
         this.materialChances = materialChances;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
     }
 
 }

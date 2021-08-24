@@ -39,6 +39,7 @@ public class GeneratorManager extends Manager {
             final ItemGenerator itemGenerator = new ItemGenerator(Integer.parseInt(s));
             itemGenerator.setDisplayName(section.getString(s + ".name"));
             itemGenerator.setDescription(section.getStringList(s + ".description"));
+            itemGenerator.setCost(section.getDouble(s + ".cost"));
 
             // Get all the generator's materials to see if they exist.
             final ConfigurationSection materialSection = section.getConfigurationSection("materials");
@@ -47,11 +48,11 @@ public class GeneratorManager extends Manager {
 
             // Add all the generator materials to the generator type's materials + chances
             materialSection.getKeys(false).forEach(material -> {
-                Material matchedMaterial = Material.matchMaterial(Optional.ofNullable(materialSection.getString(material + ".material")).orElse("DIRT"));
+                // Get the material of the item, If the material doesn't exist, skip.
+                Material matchedMaterial = Material.matchMaterial(material.toUpperCase());
 
-                // Make default item dort
                 if (matchedMaterial == null)
-                    matchedMaterial = Material.DIRT;
+                    return;
 
                 // Add the item to the material chances map.
                 itemGenerator.getMaterialChances().put(new ItemStack(matchedMaterial, materialSection.getInt(material + ".amount")), materialSection.getInt(material + ".chance"));

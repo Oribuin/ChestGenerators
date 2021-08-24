@@ -2,17 +2,24 @@ package xyz.oribuin.chestgenerators.obj;
 
 import org.bukkit.Location;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Generator {
 
-    private Location location = null;
-    private boolean enabled = true;
-    private ItemGenerator itemGenerator;
-    private UUID owner = null;
+    private Location location;
+    private boolean enabled;
+    private ItemGenerator activeGenerator;
+    private UUID owner;
+    private List<ItemGenerator> unlockedGens;
 
-    public Generator(final ItemGenerator itemGen) {
-        this.itemGenerator = itemGen;
+    public Generator(final ItemGenerator activeGenerator) {
+        this.activeGenerator = activeGenerator;
+        this.location = null;
+        this.enabled = true;
+        this.owner = null;
+        this.unlockedGens = new ArrayList<>();
     }
 
     public Location getLocation() {
@@ -39,12 +46,20 @@ public class Generator {
         this.enabled = enabled;
     }
 
-    public ItemGenerator getItemGenerator() {
-        return itemGenerator;
+    public ItemGenerator getActiveGenerator() {
+        return activeGenerator;
     }
 
-    public void setItemGenerator(ItemGenerator itemGenerator) {
-        this.itemGenerator = itemGenerator;
+    public void setActiveGenerator(ItemGenerator activeGenerator) {
+        this.activeGenerator = activeGenerator;
+    }
+
+    public List<ItemGenerator> getUnlockedGens() {
+        return unlockedGens;
+    }
+
+    public void setUnlockedGens(List<ItemGenerator> unlockedGens) {
+        this.unlockedGens = unlockedGens;
     }
 
 }

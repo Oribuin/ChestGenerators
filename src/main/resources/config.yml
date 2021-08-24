@@ -29,4 +29,29 @@ generation-delay: 60
 generators:
   0:
     name: '#2c3e50Stone Generator'
-
+    desc:
+      - '&7Use this to unlock a variety'
+      - '&7of different stone-based materials.'
+    cost: 0
+    materials:
+      GRANITE:
+        amount: 1
+        chance: 45
+      ANDESITE:
+        amount: 1
+        chance: 45
+      DEEPSLATE:
+        amount: 1
+        chance: 45
+      DIORITE:
+        amount: 1
+        chance: 45
+      TUFF:
+        amount: 1
+        chance: 45
+      STONE:
+        amount: 1
+        chance: 90
+      COBBLESTONE:
+        amount: 1
+        chance: 100

@@ -48,7 +48,7 @@ public class GenerateTask extends BukkitRunnable {
                 return;
 
             // Create a new instance of the map so we don't alter the current map
-            Map<ItemStack, Integer> chanceMap = optional.get().getItemGenerator().getMaterialChances();
+            Map<ItemStack, Integer> chanceMap = optional.get().getActiveGenerator().getMaterialChances();
             final int maxChance = chanceMap.values().stream().max(Comparator.comparing(Integer::intValue)).orElse(100);
 
             for (ItemStack itemStack : chanceMap.keySet()) {
