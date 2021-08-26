@@ -43,8 +43,8 @@ public class GeneratorManager extends Manager {
             itemGenerator.setGlobalChance(section.getInt(s + ".global-chance"));
 
 
-                // Get all the generator's materials to see if they exist.
-                final ConfigurationSection materialSection = section.getConfigurationSection(s + ".materials");
+            // Get all the generator's materials to see if they exist.
+            final ConfigurationSection materialSection = section.getConfigurationSection(s + ".materials");
             if (materialSection == null)
                 return;
 
@@ -56,8 +56,13 @@ public class GeneratorManager extends Manager {
                 if (matchedMaterial == null)
                     return;
 
+                // Get global chance if the item's specific chance is not defined.
+                int chance = materialSection.get(material + ".chance") != null
+                        ? materialSection.getInt(material + ".chance")
+                        : itemGenerator.getGlobalChance();
+
                 // Add the item to the material chances map.
-                itemGenerator.getMaterialChances().put(new ItemStack(matchedMaterial, materialSection.getInt(material + ".amount")), materialSection.getInt(material + ".chance"));
+                itemGenerator.getMaterialChances().put(new ItemStack(matchedMaterial, materialSection.getInt(material + ".amount")), chance);
             });
 
             // Cache the generator

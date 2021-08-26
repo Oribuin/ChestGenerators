@@ -49,8 +49,9 @@ public class GenerateTask extends BukkitRunnable {
             // Create a new instance of the map so we don't alter the current map
             Map<ItemStack, Integer> chanceMap = optional.get().getActiveGenerator().getMaterialChances();
 
-
             // https://stackoverflow.com/a/28711505
+            // okay so in attempt to figure out how this works the way it does
+            // i can't work it out :) It just does I guess
             int sumOfPercentages = chanceMap.values().stream().reduce(0, Integer::sum);
             int current = 0;
             int randomNumber = random.nextInt(sumOfPercentages);
@@ -63,14 +64,8 @@ public class GenerateTask extends BukkitRunnable {
                 // ooo pretty particles
                 final Color color = Color.fromRGB(231, 56, 39);
                 for (int i = 0; i < 3; i++)
-                    chest.getWorld().spawnParticle(Particle.REDSTONE, PluginUtils.centerLocation(chest.getLocation()),
-                            1,
-                            0.3,
-                            0.3,
-                            0.3,
-                            0.0,
-                            new Particle.DustOptions(color, 1)
-                    );
+                    chest.getWorld().spawnParticle(Particle.REDSTONE, PluginUtils.centerLocation(chest.getLocation()), 1, 0.3, 0.3, 0.3, 0.0, new Particle.DustOptions(color, 1));
+
                 break;
             }
 

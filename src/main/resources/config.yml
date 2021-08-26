@@ -41,29 +41,23 @@ generators:
       - '#99ff99Cost &7| &fFree'
       - '&f&m-------------'
     cost: 0
+    global-chance: 20
     materials:
       GRANITE:
         amount: 1
-        chance: 45
       ANDESITE:
         amount: 1
-        chance: 45
+        chance: 20
       COBBLED_DEEPSLATE:
         amount: 1
-        chance: 45
       DIORITE:
         amount: 1
-        chance: 45
       TUFF:
         amount: 1
-        chance: 45
       STONE:
         amount: 1
-        chance: 90
-        # If the last chance is not 100, it will not generate anything
       COBBLESTONE:
         amount: 1
-        chance: 100
   1:
     name: '#00F260Wood Generator'
     icon: OAK_LOG

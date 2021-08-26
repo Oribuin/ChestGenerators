@@ -25,7 +25,7 @@ public class ItemGenerator {
         this.description = new ArrayList<>();
         this.materialChances = new HashMap<>();
         this.cost = 0.0;
-        this.globalChance = 35;
+        this.globalChance = 20;
     }
 
     public int getId() {
