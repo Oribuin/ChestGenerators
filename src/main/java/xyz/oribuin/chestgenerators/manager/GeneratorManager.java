@@ -37,11 +37,14 @@ public class GeneratorManager extends Manager {
             // Define basic generator values
             final ItemGenerator itemGenerator = new ItemGenerator(Integer.parseInt(s));
             itemGenerator.setDisplayName(section.getString(s + ".name"));
-            itemGenerator.setDescription(section.getStringList(s + ".description"));
+            itemGenerator.setDescription(section.getStringList(s + ".desc"));
             itemGenerator.setCost(section.getDouble(s + ".cost"));
+            itemGenerator.setDisplayItem(Material.matchMaterial(Optional.ofNullable(section.getString(s + ".icon")).orElse("BEDROCK")));
+            itemGenerator.setGlobalChance(section.getInt(s + ".global-chance"));
 
-            // Get all the generator's materials to see if they exist.
-            final ConfigurationSection materialSection = section.getConfigurationSection(s + ".materials");
+
+                // Get all the generator's materials to see if they exist.
+                final ConfigurationSection materialSection = section.getConfigurationSection(s + ".materials");
             if (materialSection == null)
                 return;
 

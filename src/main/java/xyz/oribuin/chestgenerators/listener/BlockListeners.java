@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
@@ -15,6 +16,8 @@ import xyz.oribuin.chestgenerators.manager.DataManager;
 import xyz.oribuin.chestgenerators.manager.GeneratorManager;
 import xyz.oribuin.chestgenerators.obj.Generator;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 import static xyz.oribuin.chestgenerators.util.PluginUtils.getBlockLoc;
@@ -35,7 +38,7 @@ public class BlockListeners implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-    public void onBlockPlace(BlockPlaceEvent event) {
+    public void onGenPlace(BlockPlaceEvent event) {
         final Player player = event.getPlayer();
 
         if (!(event.getBlock().getState() instanceof Chest chest))
@@ -52,10 +55,8 @@ public class BlockListeners implements Listener {
             return;
 
         // TODO, Add protection plugin checks.
-        if (this.chestManager.getGenFromPDC(getBlockLoc(event.getBlock().getLocation()), chest.getPersistentDataContainer()).isPresent())
+        if (this.chestManager.getGenFromPDC(event.getBlock().getLocation(), chest.getPersistentDataContainer()).isPresent())
             return;
-
-        // TODO, Stop chest from merging with another one
 
         // TODO Stop The ability to place another player's chest if config option is enabled & player doesnt have bypass permission
 
@@ -63,6 +64,31 @@ public class BlockListeners implements Listener {
         gen.setLocation(getBlockLoc(chest.getLocation()));
         this.data.createGenerator(gen);
         this.chestManager.saveGenerator(gen);
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    public void onGenBreak(BlockBreakEvent event) {
+
+        final Player player = event.getPlayer();
+        if (!(event.getBlock().getState() instanceof Chest chest))
+            return;
+
+        final Optional<Generator> generator = this.chestManager.getGenFromPDC(chest.getLocation(), chest.getPersistentDataContainer());
+        if (generator.isEmpty())
+            return;
+
+        // TODO Stop The ability to place another player's chest if config option is enabled & player doesnt have bypass permission
+        this.data.deleteGenerator(chest.getLocation());
+        // todo save message
+
+        chest.getWorld().dropItemNaturally(event.getBlock().getLocation(), this.chestManager.getGeneratorAsItem(generator.get(), 1));
+        // Get all the items from the block that was destroyed
+        Arrays.stream(chest.getBlockInventory().getContents())
+                .filter(Objects::nonNull)
+                .forEach(itemStack -> chest.getWorld().dropItem(chest.getLocation(), itemStack));
+
+        event.setDropItems(false);
+
     }
 
     @EventHandler(ignoreCancelled = true)

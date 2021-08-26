@@ -1,6 +1,7 @@
 package xyz.oribuin.chestgenerators;
 
 import xyz.oribuin.chestgenerators.listener.BlockListeners;
+import xyz.oribuin.chestgenerators.listener.PlayerListeners;
 import xyz.oribuin.chestgenerators.manager.ChestManager;
 import xyz.oribuin.chestgenerators.manager.DataManager;
 import xyz.oribuin.chestgenerators.manager.GeneratorManager;
@@ -21,6 +22,7 @@ public class ChestGenPlugin extends OriPlugin {
 
         // Register Plugin Listeners.
         new BlockListeners(this);
+        new PlayerListeners(this);
 
         // Load & Run the scheduled generator task.
         new GenerateTask(this).runTaskTimer(this, 0, this.getConfig().getInt("generation-delay"));

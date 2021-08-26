@@ -138,13 +138,13 @@ public class ChestManager extends Manager {
      * @param itemGens The list of item generators
      * @return The item generator ids
      */
-    public String serializeItemGens(List<ItemGenerator> itemGens) {
+    public String serializeItemGens(Set<ItemGenerator> itemGens) {
         return gson.toJson(new SavedGenerators(itemGens.stream().map(ItemGenerator::getId).collect(Collectors.toList())));
     }
 
-    public List<ItemGenerator> deserializeItemGens(String serialized) {
+    public Set<ItemGenerator> deserializeItemGens(String serialized) {
         if (serialized == null)
-            return new ArrayList<>();
+            return Set.of();
 
         final GeneratorManager genManager = this.plugin.getManager(GeneratorManager.class);
 
@@ -153,7 +153,7 @@ public class ChestManager extends Manager {
                 .map(genManager::getGeneratorByID)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
     }
 

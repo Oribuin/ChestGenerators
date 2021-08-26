@@ -2,9 +2,9 @@ package xyz.oribuin.chestgenerators.obj;
 
 import org.bukkit.Location;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Generator {
 
@@ -12,14 +12,18 @@ public class Generator {
     private boolean enabled;
     private ItemGenerator activeGenerator;
     private UUID owner;
-    private List<ItemGenerator> unlockedGens;
+    private Set<ItemGenerator> unlockedGens;
 
     public Generator(final ItemGenerator activeGenerator) {
         this.activeGenerator = activeGenerator;
         this.location = null;
         this.enabled = true;
         this.owner = null;
-        this.unlockedGens = Collections.singletonList(activeGenerator);
+        this.unlockedGens = Set.of(activeGenerator);
+    }
+
+    public boolean hasUnlockedGenerator(ItemGenerator itemGenerator) {
+        return this.getUnlockedGens().stream().map(ItemGenerator::getId).collect(Collectors.toList()).contains(itemGenerator.getId());
     }
 
     public Location getLocation() {
@@ -54,11 +58,11 @@ public class Generator {
         this.activeGenerator = activeGenerator;
     }
 
-    public List<ItemGenerator> getUnlockedGens() {
+    public Set<ItemGenerator> getUnlockedGens() {
         return unlockedGens;
     }
 
-    public void setUnlockedGens(List<ItemGenerator> unlockedGens) {
+    public void setUnlockedGens(Set<ItemGenerator> unlockedGens) {
         this.unlockedGens = unlockedGens;
     }
 

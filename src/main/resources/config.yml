@@ -26,12 +26,20 @@ generator-item:
 # The time in ticks before each item is generated in the chests.
 generation-delay: 60
 
+# This is the way the changes for all the items are listed
+# Underneath the description.
+chance-mapping: '#99ff99%item% x%amount% &7: &f%chance%&f%'
+
 generators:
   0:
     name: '#2c3e50Stone Generator'
+    icon: STONE
     desc:
       - '&7Use this to unlock a variety'
       - '&7of different stone-based materials.'
+      - ' '
+      - '#99ff99Cost &7| &fFree'
+      - '&f&m-------------'
     cost: 0
     materials:
       GRANITE:
@@ -40,7 +48,7 @@ generators:
       ANDESITE:
         amount: 1
         chance: 45
-      DEEPSLATE:
+      COBBLED_DEEPSLATE:
         amount: 1
         chance: 45
       DIORITE:
@@ -52,6 +60,36 @@ generators:
       STONE:
         amount: 1
         chance: 90
+        # If the last chance is not 100, it will not generate anything
       COBBLESTONE:
+        amount: 1
+        chance: 100
+  1:
+    name: '#00F260Wood Generator'
+    icon: OAK_LOG
+    desc:
+      - '&7Use this to unlock a variety'
+      - '&7of different wood-based materials.'
+      - ' '
+      - '#99ff99Cost &7| &f$10,000'
+      - '&f&m-------------'
+    cost: 10000
+    materials:
+      BIRCH_LOG:
+        amount: 1
+        chance: 16
+      JUNGLE_LOG:
+        amount: 1
+        chance: 16
+      ACACIA_LOG:
+        amount: 1
+        chance: 16
+      DARK_OAK_LOG:
+        amount: 1
+        chance: 16
+      SPRUCE_LOG:
+        amount: 1
+        chance: 16
+      OAK_LOG:
         amount: 1
         chance: 100
