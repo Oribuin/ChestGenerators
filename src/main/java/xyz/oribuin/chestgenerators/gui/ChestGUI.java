@@ -73,12 +73,13 @@ public class ChestGUI {
 
         final String chanceMapping = this.plugin.getConfig().getString("chance-mapping");
         final List<ItemGenerator> generators = new ArrayList<>(this.genManager.getGeneratorMap().values());
-        generators.sort(Comparator.comparing(generator::hasUnlockedGenerator));
+        generators.sort(Comparator.comparing(ItemGenerator::getCost));
 
         generators.forEach(gen -> {
             final List<String> description = gen.getDescription().stream()
                     .map(HexUtils::colorify)
                     .collect(Collectors.toList());
+
 
             final List<Map.Entry<ItemStack, Integer>> chanceMap = gen.getMaterialChances()
                     .entrySet()
@@ -86,23 +87,22 @@ public class ChestGUI {
                     .sorted(Map.Entry.comparingByValue())
                     .collect(Collectors.toList());
 
-            chanceMap.forEach(entry -> {
-                final ItemStack itemStack = entry.getKey();
+            if (chanceMapping == null || chanceMapping.equalsIgnoreCase("cancel"))
+                chanceMap.forEach(entry -> {
+                    final ItemStack itemStack = entry.getKey();
 
-                final StringPlaceholders plc = StringPlaceholders.builder("item", WordUtils.capitalizeFully(itemStack.getType().name().toLowerCase().replace("_", " ")))
-                        .addPlaceholder("amount", itemStack.getAmount())
-                        .addPlaceholder("chance", entry.getValue())
-                        .build();
+                    final StringPlaceholders plc = StringPlaceholders.builder("item", WordUtils.capitalizeFully(itemStack.getType().name().toLowerCase().replace("_", " ")))
+                            .addPlaceholder("amount", itemStack.getAmount())
+                            .addPlaceholder("chance", entry.getValue())
+                            .build();
 
-                description.add(HexUtils.colorify(plc.apply(chanceMapping)));
-            });
-
-            final boolean genUnlocked = generator.getUnlockedGens().stream().map(ItemGenerator::getId).collect(Collectors.toList()).contains(gen.getId());
+                    description.add(HexUtils.colorify(plc.apply(chanceMapping)));
+                });
 
             final ItemStack item = new Item.Builder(gen.getDisplayItem())
                     .setName(colorify(gen.getDisplayName()))
                     .setLore(description)
-                    .glow(genUnlocked)
+                    .glow(generator.getActiveGenerator() == gen)
                     .create();
 
             gui.addPageItem(item, event -> {
